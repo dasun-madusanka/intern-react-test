@@ -12,7 +12,7 @@ export default function Products() {
   }, []);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", position: "relative" }}>
       <Box
         sx={{
           width: "100%",
