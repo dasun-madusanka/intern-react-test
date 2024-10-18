@@ -6,6 +6,7 @@ import { fetchProductById } from "../APIs";
 import { Box } from "@mui/material";
 import SingleProductRatings from "../components/SingleProductRatings";
 import SingleProductBasic from "../components/SingleProductBasic";
+import SingleProductReviews from "../components/SingleProductReviews";
 
 type Review = {
   rating: number;
@@ -16,7 +17,7 @@ type Review = {
 };
 
 type RatingCounts = {
-    [key: number]: number;
+  [key: number]: number;
 };
 
 function countRatings(reviews: Review[] = []) {
@@ -88,7 +89,9 @@ export default function SingleProduct() {
         twoStar={ratingCounts[2]}
         oneStar={ratingCounts[1]}
         total={product.reviews?.length || 0}
-        />
+      />
+
+      <SingleProductReviews reviews={product.reviews || []} />
     </Box>
   );
 }
