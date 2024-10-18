@@ -44,7 +44,7 @@ export default function SingleProductDescription({
 }: SingleProductDescriptionProps) {
   return (
     <Paper sx={{ width: "100%", p: 2, mb: 2, textAlign: "left" }}>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h5" fontWeight={600} gutterBottom sx={{mb: 2}}>
         Description
       </Typography>
       <Typography variant="body2" gutterBottom>
@@ -53,7 +53,7 @@ export default function SingleProductDescription({
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h5" fontWeight={600} gutterBottom sx={{mb: 2}}>
         Specifications
       </Typography>
 
