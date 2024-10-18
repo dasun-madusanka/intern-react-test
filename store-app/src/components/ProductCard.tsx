@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -14,15 +15,20 @@ type ProductCardProps = {
 };
 
 export default function ProductCard({ pid }: ProductCardProps) {
+  const navigate = useNavigate();
   const [product, setProduct] = React.useState({} as Product);
 
   React.useEffect(() => {
     fetchProductById(pid).then((response) => setProduct(response.data));
   }, [pid]);
 
+  const handleProductClick = () => {
+    navigate(`/products/${pid}`);
+  };
+
   return (
     <Card sx={{ width: 250, height: 300 }}>
-      <CardActionArea sx={{ height: "100%" }}>
+      <CardActionArea onClick={handleProductClick} sx={{ height: "100%" }}>
         <CardMedia
           component="img"
           sx={{ height: "40%" }}
@@ -86,11 +92,9 @@ export default function ProductCard({ pid }: ProductCardProps) {
               color="text.secondary"
               sx={{}}
             >
-               ( {product.reviews.length} )
+              ( {product.rating} )
             </Typography>
-
           </Box>
-          
         </CardContent>
       </CardActionArea>
     </Card>
