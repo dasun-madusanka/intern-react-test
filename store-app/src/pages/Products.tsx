@@ -1,30 +1,87 @@
 import React from "react";
 import Box from "@mui/material/Box";
+import Pagination from "@mui/material/Pagination";
+import { CircularProgress, Divider, Typography } from "@mui/material";
 import { Product } from "../types/Product";
 import { fetchProducts } from "../APIs";
 import ProductCard from "../components/ProductCard";
 
 export default function Products() {
   const [products, setProducts] = React.useState([{}] as Product[]);
+  const [loading, setLoading] = React.useState(true);
+  const [skip, setSkip] = React.useState(0);
+  const [productCount, setProductCount] = React.useState(0);
 
   React.useEffect(() => {
-    fetchProducts().then((response) => setProducts(response.data.products));
-  }, []);
+    try {
+      fetchProducts(10, skip).then((response) => {
+        setProducts(response.data.products);
+        setProductCount(response.data.total);
+        setLoading(false);
+      });
+    } catch (error) {
+      setLoading(true);
+      console.log(error);
+    }
+  }, [skip]);
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setSkip((value - 1) * 10);
+  };
 
   return (
-    <Box sx={{ width: "100%", position: "relative" }}>
+    <Box sx={{ width: "100%" }}>
+      <Typography
+        color="secondary"
+        variant="h5"
+        sx={{ textAlign: "left ", mt: 2, mb: 2, fontWeight: 700 }}
+      >
+        All Products
+      </Typography>
+      <Divider />
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 4,
+            justifyContent: "center",
+            mt: 2,
+          }}
+        >
+          {products.map((product) => (
+            <ProductCard pid={product.id} />
+          ))}
+        </Box>
+      )}
+
       <Box
         sx={{
-          width: "100%",
           display: "flex",
-          flexWrap: "wrap",
-          gap: 4,
           justifyContent: "center",
+          mt: 5,
         }}
       >
-        {products.map((product) => (
-          <ProductCard pid={product.id} />
-        ))}
+        <Pagination
+          count={Math.ceil(productCount / 10)}
+          onChange={handlePageChange}
+          color="primary"
+        />
       </Box>
     </Box>
   );

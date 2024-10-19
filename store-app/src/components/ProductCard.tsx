@@ -5,6 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
+import CircularProgress from "@mui/material/CircularProgress";
 import Ratings from "./Ratings";
 import { fetchProductById } from "../APIs";
 import { Product } from "../types/Product";
@@ -17,9 +18,17 @@ type ProductCardProps = {
 export default function ProductCard({ pid }: ProductCardProps) {
   const navigate = useNavigate();
   const [product, setProduct] = React.useState({} as Product);
+  const [loading, setLoading] = React.useState(true);
+
+  // React.useEffect(() => {
+  //   fetchProductById(pid).then((response) => setProduct(response.data));
+  // }, [pid]);
 
   React.useEffect(() => {
-    fetchProductById(pid).then((response) => setProduct(response.data));
+    fetchProductById(pid).then((response) => {
+      setProduct(response.data);
+      setLoading(false);
+    });
   }, [pid]);
 
   const handleProductClick = () => {
@@ -28,75 +37,88 @@ export default function ProductCard({ pid }: ProductCardProps) {
 
   return (
     <Card sx={{ width: 250, height: 300 }}>
-      <CardActionArea onClick={handleProductClick} sx={{ height: "100%" }}>
-        <CardMedia
-          component="img"
-          sx={{ height: "40%" }}
-          image={product.thumbnail}
-          alt={product.title}
-        />
-        <CardContent
+      {loading ? (
+        <Box
           sx={{
             display: "flex",
-            height: "50%",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
           }}
         >
-          <Typography
-            gutterBottom
-            textAlign={"left"}
-            variant="subtitle1"
-            component="div"
-          >
-            {product.title}
-          </Typography>
-          <Box
+          <CircularProgress />
+        </Box>
+      ) : (
+        <CardActionArea onClick={handleProductClick} sx={{ height: "100%" }}>
+          <CardMedia
+            component="img"
+            sx={{ height: "40%" }}
+            image={product.thumbnail}
+            alt={product.title}
+          />
+          <CardContent
             sx={{
               display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
+              height: "50%",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
             }}
           >
             <Typography
+              gutterBottom
               textAlign={"left"}
-              variant="h6"
-              color="secondary"
-              sx={{}}
+              variant="subtitle1"
+              component="div"
             >
-              {product.price} $
+              {product.title}
             </Typography>
-            <Typography
-              textAlign={"left"}
-              variant="body2"
-              color="text.secondary"
-              sx={{}}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 1,
+              }}
             >
-              {product.discountPercentage} % off
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Ratings rating={product.rating} />
-            <Typography
-              textAlign={"left"}
-              variant="body2"
-              color="text.secondary"
-              sx={{}}
+              <Typography
+                textAlign={"left"}
+                variant="h6"
+                color="secondary"
+                sx={{}}
+              >
+                {product.price} $
+              </Typography>
+              <Typography
+                textAlign={"left"}
+                variant="body2"
+                color="text.secondary"
+                sx={{}}
+              >
+                {product.discountPercentage} % off
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 1,
+              }}
             >
-              ( {product.rating} )
-            </Typography>
-          </Box>
-        </CardContent>
-      </CardActionArea>
+              <Ratings rating={product.rating} />
+              <Typography
+                textAlign={"left"}
+                variant="body2"
+                color="text.secondary"
+                sx={{}}
+              >
+                ( {product.rating} )
+              </Typography>
+            </Box>
+          </CardContent>
+        </CardActionArea>
+      )}
     </Card>
   );
 }

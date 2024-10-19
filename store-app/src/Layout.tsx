@@ -3,7 +3,7 @@ import React from "react";
 import Header from "../src/components/Header";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 interface LayoutProps {
@@ -13,7 +13,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   return (
-    <>
+    <Box sx={{width: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-start", height: "100%"}}>
       <Header />
       <Container sx={{ width: "100%", p: 2 }}>{children}</Container>
       <Fab
@@ -24,7 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       >
         <AddIcon />
       </Fab>
-    </>
+    </Box>
   );
 };
 

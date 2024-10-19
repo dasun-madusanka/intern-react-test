@@ -19,6 +19,7 @@ type ImageUploadProps = {
   title: string;
   isError?: boolean;
   errorTitle?: string;
+  defaultImages?: string[];
 };
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -27,6 +28,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   title,
   isError = false,
   errorTitle = "",
+  defaultImages = [],
 }) => {
   const [images, setImages] = useState<File[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -37,12 +39,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     null
   );
 
+  React.useEffect(() => {
+    if (defaultImages.length <=0 || defaultImages[0] == "")
+        setPreviewURLs([]);
+    else
+        setPreviewURLs(defaultImages);
+  }, []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       const selectedFile = files[0];
       if (multiple) {
-        // Allow multiple images
         setImages((prevImages) => [...prevImages, selectedFile]);
         setPreviewURLs((prevPreviews) => [
           ...prevPreviews,

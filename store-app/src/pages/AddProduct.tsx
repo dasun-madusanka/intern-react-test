@@ -7,7 +7,6 @@ import {
   StepLabel,
   Typography,
   TextField,
-  MenuItem,
   Grid,
   StepContent,
 } from "@mui/material";
@@ -27,6 +26,7 @@ const steps = [
 const AddProduct: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [productCount, setProductCount] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [product, setProduct] = useState<Product>({
     id: 0,
@@ -71,11 +71,18 @@ const AddProduct: React.FC = () => {
   });
 
   React.useEffect(() => {
-    fetchProducts().then((response) => setProducts(response.data.products));
-  }, [product]);
+    try {
+      fetchProducts(1, productCount - 1).then((response) => {
+        setProducts(response.data.products);
+        setProductCount(response.data.total);
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [product, productCount]);
 
   const generateId = (): number => {
-    const preId = products.length > 0 ? products[products.length - 1].id : 0;
+    const preId = productCount > 0 ? products[0].id : 0;
     return preId + 1;
   };
 
@@ -95,6 +102,9 @@ const AddProduct: React.FC = () => {
 
     if (step === 1) {
       if (product.price <= 0) newErrors.price = "Price must be greater than 0";
+      if (product.discountPercentage < 0)
+        newErrors.discountPercentage =
+          "Discount Percentage must be greater than 0";
     }
 
     if (step === 2) {
@@ -109,8 +119,6 @@ const AddProduct: React.FC = () => {
     }
 
     if (step === 3) {
-      if (!product.returnPolicy)
-        newErrors.returnPolicy = "Return Policy is required";
       if (product.minimumOrderQuantity <= 0)
         newErrors.minimumOrderQuantity =
           "Minimum Order Quantity must be greater than 0";
@@ -153,7 +161,11 @@ const AddProduct: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Product Submitted", product);
+    try {
+      addProduct(product);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -173,6 +185,7 @@ const AddProduct: React.FC = () => {
                         name="title"
                         error={!!errors.title}
                         helperText={errors.title}
+                        value={product.title}
                         required
                         onChange={(e) =>
                           setProduct({ ...product, title: e.target.value })
@@ -186,6 +199,7 @@ const AddProduct: React.FC = () => {
                         name="category"
                         error={!!errors.category}
                         helperText={errors.category}
+                        value={product.category}
                         required
                         onChange={(e) =>
                           setProduct({ ...product, category: e.target.value })
@@ -197,6 +211,7 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="Brand"
                         name="brand"
+                        value={product.brand}
                         onChange={(e) =>
                           setProduct({ ...product, brand: e.target.value })
                         }
@@ -209,6 +224,7 @@ const AddProduct: React.FC = () => {
                         name="sku"
                         error={!!errors.sku}
                         helperText={errors.sku}
+                        value={product.sku}
                         required
                         onChange={(e) =>
                           setProduct({ ...product, sku: e.target.value })
@@ -220,6 +236,7 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="Tags"
                         name="tags"
+                        value={product.tags}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -236,6 +253,7 @@ const AddProduct: React.FC = () => {
                         type="number"
                         error={!!errors.stock}
                         helperText={errors.stock}
+                        value={product.stock}
                         required
                         onChange={(e) =>
                           setProduct({
@@ -253,6 +271,7 @@ const AddProduct: React.FC = () => {
                         multiline
                         rows={4}
                         required
+                        value={product.description}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -275,6 +294,7 @@ const AddProduct: React.FC = () => {
                         error={!!errors.price}
                         helperText={errors.price}
                         required
+                        value={product.price}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -289,6 +309,9 @@ const AddProduct: React.FC = () => {
                         label="Discount Percentage"
                         name="discountPercentage"
                         type="number"
+                        value={product.discountPercentage}
+                        error={!!errors.discountPercentage}
+                        helperText={errors.discountPercentage}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -308,7 +331,9 @@ const AddProduct: React.FC = () => {
                         label="Width"
                         name="width"
                         type="number"
-                        required
+                        error={!!errors.width}
+                        helperText={errors.width}
+                        value={product.dimensions.width}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -326,7 +351,9 @@ const AddProduct: React.FC = () => {
                         label="Height"
                         name="height"
                         type="number"
-                        required
+                        error={!!errors.height}
+                        helperText={errors.height}
+                        value={product.dimensions.height}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -344,7 +371,9 @@ const AddProduct: React.FC = () => {
                         label="Depth"
                         name="depth"
                         type="number"
-                        required
+                        error={!!errors.depth}
+                        helperText={errors.depth}
+                        value={product.dimensions.depth}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -362,7 +391,9 @@ const AddProduct: React.FC = () => {
                         label="Weight"
                         name="weight"
                         type="number"
-                        required
+                        error={!!errors.weight}
+                        helperText={errors.weight}
+                        value={product.weight}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -381,6 +412,7 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="Shipping Information"
                         name="shippingInformation"
+                        value={product.shippingInformation}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -394,6 +426,7 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="Warranty Information"
                         name="warrentyInformation"
+                        value={product.warrantyInformation}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -407,6 +440,7 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="Return Policy"
                         name="returnPolicy"
+                        value={product.returnPolicy}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -420,7 +454,7 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="Barcode Value"
                         name="barcode"
-                        required
+                        value={product.meta.barcode}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -438,6 +472,9 @@ const AddProduct: React.FC = () => {
                         label="Minimum Order Quantity"
                         name="minimumOrderQuantity"
                         type="number"
+                        error={!!errors.minimumOrderQuantity}
+                        helperText={errors.minimumOrderQuantity}
+                        value={product.minimumOrderQuantity}
                         onChange={(e) =>
                           setProduct({
                             ...product,
@@ -458,6 +495,7 @@ const AddProduct: React.FC = () => {
                         title="Select Thumbnail"
                         isError={!!errors.thumbnail}
                         errorTitle={errors.thumbnail}
+                        defaultImages={[product.thumbnail]}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -467,6 +505,7 @@ const AddProduct: React.FC = () => {
                         title="Select QR Code"
                         isError={!!errors.qrCode}
                         errorTitle={errors.qrCode}
+                        defaultImages={[product.meta.qrCode]}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -474,13 +513,21 @@ const AddProduct: React.FC = () => {
                         multiple={true}
                         onUploadComplete={handleProductImages}
                         title="Select Images"
+                        defaultImages={product.images}
                       />
                     </Grid>
                   </Grid>
                 )}
 
-                <Box sx={{ mb: 2 }}>
-                  <div>
+                <Box
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    mt: 2,
+                  }}
+                >
+                  <Box>
                     <Button
                       variant="contained"
                       onClick={handleNext}
@@ -495,7 +542,7 @@ const AddProduct: React.FC = () => {
                     >
                       Back
                     </Button>
-                  </div>
+                  </Box>
                 </Box>
               </form>
             </StepContent>
