@@ -12,6 +12,7 @@ import {
   StepContent,
 } from "@mui/material";
 import { Product } from "../types/Product";
+import ImageUpload from "../components/ImageUpload";
 import { useForm, Controller } from "react-hook-form";
 
 const steps = [
@@ -46,7 +47,8 @@ interface ProductForm {
 }
 
 const AddProduct: React.FC = () => {
-  const [activeStep, setActiveStep] = useState(3);
+  const [activeStep, setActiveStep] = useState(0);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [product, setProduct] = useState<Product>({
     id: 0,
     title: "",
@@ -89,8 +91,57 @@ const AddProduct: React.FC = () => {
     thumbnail: "",
   });
 
+  const validateStep = (step: number) => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (step === 0) {
+      if (!product.title) newErrors.title = "Title is required";
+      if (!product.category) newErrors.category = "Category is required";
+      if (!product.sku) newErrors.sku = "SKU is required";
+      if (product.stock <= 0) newErrors.stock = "Stock must be greater than 0";
+    }
+
+    if (step === 1) {
+      if (product.price <= 0) newErrors.price = "Price must be greater than 0";
+    }
+
+    if (step === 2) {
+      if (product.dimensions.width <= 0) newErrors.width = "Width is required";
+      if (product.dimensions.height <= 0)
+        newErrors.height = "Height is required";
+      if (product.dimensions.depth <= 0) newErrors.depth = "Depth is required";
+      if (product.weight <= 0) newErrors.weight = "Weight is required";
+    }
+
+    if (step === 3) {
+      if (!product.returnPolicy)
+        newErrors.returnPolicy = "Return Policy is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleProductImages = (urls: string[]) => {
+    console.log("Image URLs", urls);
+    setProduct({ ...product, images: urls });
+  };
+
+  const handleThumbnail = (url: string[]) => {
+    setProduct({ ...product, thumbnail: url[0] });
+  };
+
+  const handleQrCode = (url: string[]) => {
+    setProduct({
+      ...product,
+      meta: { ...product.meta, qrCode: url[0] },
+    });
+  };
+
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (validateStep(activeStep)) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleBack = () => {
@@ -120,6 +171,8 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="Title"
                         name="title"
+                        error={!!errors.title}
+                        helperText={errors.title}
                         required
                         onChange={(e) =>
                           setProduct({ ...product, title: e.target.value })
@@ -131,6 +184,8 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="Category"
                         name="category"
+                        error={!!errors.category}
+                        helperText={errors.category}
                         required
                         onChange={(e) =>
                           setProduct({ ...product, category: e.target.value })
@@ -152,6 +207,8 @@ const AddProduct: React.FC = () => {
                         fullWidth
                         label="SKU"
                         name="sku"
+                        error={!!errors.sku}
+                        helperText={errors.sku}
                         required
                         onChange={(e) =>
                           setProduct({ ...product, sku: e.target.value })
@@ -177,6 +234,8 @@ const AddProduct: React.FC = () => {
                         label="Stock Count"
                         name="stock"
                         type="number"
+                        error={!!errors.stock}
+                        helperText={errors.stock}
                         required
                         onChange={(e) =>
                           setProduct({
@@ -213,6 +272,8 @@ const AddProduct: React.FC = () => {
                         label="Price"
                         name="price"
                         type="number"
+                        error={!!errors.price}
+                        helperText={errors.price}
                         required
                         onChange={(e) =>
                           setProduct({
@@ -385,8 +446,32 @@ const AddProduct: React.FC = () => {
                         }
                       />
                     </Grid>
-                    
-                    
+                  </Grid>
+                )}
+
+                {index === 4 && (
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <ImageUpload
+                        multiple={false}
+                        onUploadComplete={handleThumbnail}
+                        title="Select Thumbnail"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <ImageUpload
+                        multiple={false}
+                        onUploadComplete={handleQrCode}
+                        title="Select QR Code"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <ImageUpload
+                        multiple={true}
+                        onUploadComplete={handleProductImages}
+                        title="Select Images"
+                      />
+                    </Grid>
                   </Grid>
                 )}
 
@@ -394,7 +479,7 @@ const AddProduct: React.FC = () => {
                   <div>
                     <Button
                       variant="contained"
-                      // onClick={index === steps.length - 1 ? handleSubmit() : handleNext}
+                      onClick={handleNext}
                       sx={{ mt: 1, mr: 1 }}
                     >
                       {index === steps.length - 1 ? "Finish" : "Next"}
@@ -414,9 +499,12 @@ const AddProduct: React.FC = () => {
         ))}
       </Stepper>
       {activeStep === steps.length && (
-        <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
-          All steps completed - you're finished
-        </Typography>
+        <Box sx={{ p: 3 }}>
+        <Typography variant="h5">Product Added Successfully!</Typography>
+        <Button onClick={handleSubmit} variant="contained">
+          Submit
+        </Button>
+      </Box>
       )}
     </Box>
   );
