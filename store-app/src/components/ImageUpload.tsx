@@ -17,12 +17,16 @@ type ImageUploadProps = {
   multiple?: boolean;
   onUploadComplete: (urls: string[]) => void;
   title: string;
+  isError?: boolean;
+  errorTitle?: string;
 };
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
   multiple = false,
   onUploadComplete,
   title,
+  isError = false,
+  errorTitle = "",
 }) => {
   const [images, setImages] = useState<File[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -114,7 +118,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         p: 1,
       }}
     >
-      <Box sx={{ width: "75%" }}>
+      <Box sx={{ width: "100%" }}>
         {previewURLs.length > 0 && (
           <Box
             sx={{
@@ -167,7 +171,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           alignItems: "center",
         }}
       >
-        <Button component="label"  sx={{ mb: 2, width: 180, color: "text.secondary" }}>
+        <Button
+          component="label"
+          sx={{ mb: 2, width: 180, color: "text.secondary" }}
+        >
           {title}
           <input
             type="file"
@@ -201,6 +208,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         <Box sx={{ mt: 2 }}>
           <Typography variant="h6" color="error">
             {errorMessage}
+          </Typography>
+        </Box>
+      )}
+
+      {isError && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle1" color="error">
+            {errorTitle}
           </Typography>
         </Box>
       )}

@@ -11,6 +11,14 @@ export function fetchProductById(id: number) {
   return axios.get(`${API_URL}/${id}`);
 }
 
-export const addProduct = (product: Product) =>
-  axios.post(`${API_URL}/add`, product);
-export const deleteProduct = (id: number) => axios.delete(`${API_URL}/${id}`);
+export function addProduct(product: Product) {
+  return axios.post(`${API_URL}/add`, product);
+}
+
+export function deleteProduct(id: number) {
+  return axios.delete(`${API_URL}/${id}`);
+}
+
+// export const addProduct = (product: Product) =>
+//   axios.post(`${API_URL}/add`, product);
+// export const deleteProduct = (id: number) => axios.delete(`${API_URL}/${id}`);

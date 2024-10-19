@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { Product } from "../types/Product";
 import ImageUpload from "../components/ImageUpload";
-import { useForm, Controller } from "react-hook-form";
+import { addProduct, fetchProducts } from "../APIs";
 
 const steps = [
   "Basic Product Details",
@@ -24,31 +24,10 @@ const steps = [
   "Finish",
 ];
 
-interface ProductForm {
-  title: string;
-  description: string;
-  category: string;
-  price: number;
-  discountPercentage: number;
-  rating: number;
-  stock: number;
-  brand: string;
-  sku: string;
-  weight: number;
-  width: number;
-  height: number;
-  depth: number;
-  warrantyInformation: string;
-  shippingInformation: string;
-  availabilityStatus: string;
-  returnPolicy: string;
-  images: string[];
-  thumbnail: string;
-}
-
 const AddProduct: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [products, setProducts] = useState<Product[]>([]);
   const [product, setProduct] = useState<Product>({
     id: 0,
     title: "",
@@ -91,6 +70,19 @@ const AddProduct: React.FC = () => {
     thumbnail: "",
   });
 
+  React.useEffect(() => {
+    fetchProducts().then((response) => setProducts(response.data.products));
+  }, [product]);
+
+  const generateId = (): number => {
+    const preId = products.length > 0 ? products[products.length - 1].id : 0;
+    return preId + 1;
+  };
+
+  React.useEffect(() => {
+    setProduct({ ...product, id: generateId() });
+  }, [products]);
+
   const validateStep = (step: number) => {
     const newErrors: { [key: string]: string } = {};
 
@@ -106,16 +98,28 @@ const AddProduct: React.FC = () => {
     }
 
     if (step === 2) {
-      if (product.dimensions.width <= 0) newErrors.width = "Width is required";
-      if (product.dimensions.height <= 0)
-        newErrors.height = "Height is required";
-      if (product.dimensions.depth <= 0) newErrors.depth = "Depth is required";
-      if (product.weight <= 0) newErrors.weight = "Weight is required";
+      if (product.dimensions.width < 0)
+        newErrors.width = "Width must be greater than 0";
+      if (product.dimensions.height < 0)
+        newErrors.height = "Height must be greater than 0";
+      if (product.dimensions.depth < 0)
+        newErrors.depth = "Depth must be greater than 0";
+      if (product.weight < 0)
+        newErrors.weight = "Weight must be greater than 0";
     }
 
     if (step === 3) {
       if (!product.returnPolicy)
         newErrors.returnPolicy = "Return Policy is required";
+      if (product.minimumOrderQuantity <= 0)
+        newErrors.minimumOrderQuantity =
+          "Minimum Order Quantity must be greater than 0";
+    }
+
+    if (step === 4) {
+      if (!product.thumbnail)
+        newErrors.thumbnail = "Thumbnail image is required";
+      if (!product.meta.qrCode) newErrors.qrCode = "QR Code image is required";
     }
 
     setErrors(newErrors);
@@ -146,10 +150,6 @@ const AddProduct: React.FC = () => {
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const onSubmit = (data: ProductForm) => {
-    console.log("Form Submitted", data);
   };
 
   const handleSubmit = () => {
@@ -456,6 +456,8 @@ const AddProduct: React.FC = () => {
                         multiple={false}
                         onUploadComplete={handleThumbnail}
                         title="Select Thumbnail"
+                        isError={!!errors.thumbnail}
+                        errorTitle={errors.thumbnail}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -463,6 +465,8 @@ const AddProduct: React.FC = () => {
                         multiple={false}
                         onUploadComplete={handleQrCode}
                         title="Select QR Code"
+                        isError={!!errors.qrCode}
+                        errorTitle={errors.qrCode}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -500,11 +504,11 @@ const AddProduct: React.FC = () => {
       </Stepper>
       {activeStep === steps.length && (
         <Box sx={{ p: 3 }}>
-        <Typography variant="h5">Product Added Successfully!</Typography>
-        <Button onClick={handleSubmit} variant="contained">
-          Submit
-        </Button>
-      </Box>
+          <Typography variant="h5">Product Added Successfully!</Typography>
+          <Button onClick={handleSubmit} variant="contained">
+            Submit
+          </Button>
+        </Box>
       )}
     </Box>
   );
