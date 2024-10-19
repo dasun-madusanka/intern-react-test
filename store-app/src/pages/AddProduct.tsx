@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -9,11 +9,19 @@ import {
   TextField,
   MenuItem,
   Grid,
-  StepContent
-} from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+  StepContent,
+} from "@mui/material";
+import { Product } from "../types/Product";
+import { useForm, Controller } from "react-hook-form";
 
-const steps = ['Basic Information', 'Pricing & Stock', 'Dimensions & Shipping', 'Reviews', 'Media Upload', 'Summary'];
+const steps = [
+  "Basic Product Details",
+  "Pricing & Discounts",
+  "Product Specifications",
+  "Other Details",
+  "Media Upload",
+  "Finish",
+];
 
 interface ProductForm {
   title: string;
@@ -38,29 +46,47 @@ interface ProductForm {
 }
 
 const AddProduct: React.FC = () => {
-  const [activeStep, setActiveStep] = useState(0);
-  const { control, handleSubmit, watch } = useForm<ProductForm>({
-    defaultValues: {
-      title: '',
-      description: '',
-      category: '',
-      price: 0,
-      discountPercentage: 0,
-      rating: 0,
-      stock: 0,
-      brand: '',
-      sku: '',
-      weight: 0,
+  const [activeStep, setActiveStep] = useState(3);
+  const [product, setProduct] = useState<Product>({
+    id: 0,
+    title: "",
+    description: "",
+    category: "",
+    price: 0,
+    discountPercentage: 0,
+    rating: 0,
+    stock: 0,
+    tags: [],
+    brand: "",
+    sku: "",
+    weight: 0,
+    dimensions: {
       width: 0,
       height: 0,
       depth: 0,
-      warrantyInformation: '',
-      shippingInformation: '',
-      availabilityStatus: '',
-      returnPolicy: '',
-      images: [],
-      thumbnail: ''
-    }
+    },
+    warrantyInformation: "",
+    shippingInformation: "",
+    availabilityStatus: "",
+    reviews: [
+      {
+        rating: 0,
+        comment: "",
+        date: "",
+        reviewerName: "",
+        reviewerEmail: "",
+      },
+    ],
+    returnPolicy: "",
+    minimumOrderQuantity: 0,
+    meta: {
+      createdAt: "",
+      updatedAt: "",
+      barcode: "",
+      qrCode: "",
+    },
+    images: [],
+    thumbnail: "",
   });
 
   const handleNext = () => {
@@ -72,11 +98,15 @@ const AddProduct: React.FC = () => {
   };
 
   const onSubmit = (data: ProductForm) => {
-    console.log('Form Submitted', data);
+    console.log("Form Submitted", data);
+  };
+
+  const handleSubmit = () => {
+    console.log("Product Submitted", product);
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: "100%" }}>
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map((label, index) => (
           <Step key={label}>
@@ -86,33 +116,90 @@ const AddProduct: React.FC = () => {
                 {index === 0 && (
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                      <Controller
+                      <TextField
+                        fullWidth
+                        label="Title"
                         name="title"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField label="Title" variant="outlined" fullWidth {...field} />
-                        )}
+                        required
+                        onChange={(e) =>
+                          setProduct({ ...product, title: e.target.value })
+                        }
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Controller
+                      <TextField
+                        fullWidth
+                        label="Category"
                         name="category"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField label="Category" variant="outlined" fullWidth select {...field}>
-                            <MenuItem value="beauty">Beauty</MenuItem>
-                            <MenuItem value="electronics">Electronics</MenuItem>
-                          </TextField>
-                        )}
+                        required
+                        onChange={(e) =>
+                          setProduct({ ...product, category: e.target.value })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Brand"
+                        name="brand"
+                        onChange={(e) =>
+                          setProduct({ ...product, brand: e.target.value })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="SKU"
+                        name="sku"
+                        required
+                        onChange={(e) =>
+                          setProduct({ ...product, sku: e.target.value })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Tags"
+                        name="tags"
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            tags: e.target.value.split(","),
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Stock Count"
+                        name="stock"
+                        type="number"
+                        required
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            stock: parseInt(e.target.value),
+                          })
+                        }
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <Controller
+                      <TextField
+                        fullWidth
+                        label="Description"
                         name="description"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField label="Description" variant="outlined" fullWidth multiline rows={3} {...field} />
-                        )}
+                        multiline
+                        rows={4}
+                        required
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            description: e.target.value,
+                          })
+                        }
                       />
                     </Grid>
                   </Grid>
@@ -121,54 +208,196 @@ const AddProduct: React.FC = () => {
                 {index === 1 && (
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                      <Controller
+                      <TextField
+                        fullWidth
+                        label="Price"
                         name="price"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField label="Price" type="number" variant="outlined" fullWidth {...field} />
-                        )}
+                        type="number"
+                        required
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            price: parseInt(e.target.value),
+                          })
+                        }
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Controller
+                      <TextField
+                        fullWidth
+                        label="Discount Percentage"
                         name="discountPercentage"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField label="Discount Percentage" type="number" variant="outlined" fullWidth {...field} />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Controller
-                        name="rating"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField label="Rating" type="number" variant="outlined" fullWidth {...field} />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Controller
-                        name="stock"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField label="Stock" type="number" variant="outlined" fullWidth {...field} />
-                        )}
+                        type="number"
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            discountPercentage: parseInt(e.target.value),
+                          })
+                        }
                       />
                     </Grid>
                   </Grid>
                 )}
 
-                {/* Add other steps (Dimensions, Shipping, Reviews, Media Upload, etc.) similarly */}
+                {index === 2 && (
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        label="Width"
+                        name="width"
+                        type="number"
+                        required
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            dimensions: {
+                              ...product.dimensions,
+                              width: parseInt(e.target.value),
+                            },
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        label="Height"
+                        name="height"
+                        type="number"
+                        required
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            dimensions: {
+                              ...product.dimensions,
+                              height: parseInt(e.target.value),
+                            },
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        label="Depth"
+                        name="depth"
+                        type="number"
+                        required
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            dimensions: {
+                              ...product.dimensions,
+                              depth: parseInt(e.target.value),
+                            },
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        label="Weight"
+                        name="weight"
+                        type="number"
+                        required
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            weight: parseInt(e.target.value),
+                          })
+                        }
+                      />
+                    </Grid>
+                  </Grid>
+                )}
+
+                {index === 3 && (
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Shipping Information"
+                        name="shippingInformation"
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            shippingInformation: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Warranty Information"
+                        name="warrentyInformation"
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            warrantyInformation: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Return Policy"
+                        name="returnPolicy"
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            returnPolicy: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Barcode Value"
+                        name="barcode"
+                        required
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            meta: {
+                              ...product.meta,
+                              barcode: e.target.value,
+                            },
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Minimum Order Quantity"
+                        name="minimumOrderQuantity"
+                        type="number"
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            minimumOrderQuantity: parseInt(e.target.value),
+                          })
+                        }
+                      />
+                    </Grid>
+                    
+                    
+                  </Grid>
+                )}
 
                 <Box sx={{ mb: 2 }}>
                   <div>
                     <Button
                       variant="contained"
-                      onClick={index === steps.length - 1 ? handleSubmit(onSubmit) : handleNext}
+                      // onClick={index === steps.length - 1 ? handleSubmit() : handleNext}
                       sx={{ mt: 1, mr: 1 }}
                     >
-                      {index === steps.length - 1 ? 'Finish' : 'Next'}
+                      {index === steps.length - 1 ? "Finish" : "Next"}
                     </Button>
                     <Button
                       disabled={index === 0}
