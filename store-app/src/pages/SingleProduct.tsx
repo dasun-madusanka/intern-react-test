@@ -48,15 +48,15 @@ export default function SingleProduct() {
   const ratingCounts = countRatings(product.reviews);
 
   React.useEffect(() => {
-    try {
-      fetchProductById(Number(id)).then((response) => {
+    fetchProductById(Number(id))
+      .then((response) => {
         setProduct(response.data);
         setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(true);
+        console.log(error);
       });
-    } catch (error) {
-      setLoading(true);
-      console.log(error);
-    }
   }, [id]);
 
   return (

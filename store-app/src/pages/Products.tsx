@@ -13,16 +13,11 @@ export default function Products() {
   const [productCount, setProductCount] = React.useState(0);
 
   React.useEffect(() => {
-    try {
-      fetchProducts(10, skip).then((response) => {
-        setProducts(response.data.products);
-        setProductCount(response.data.total);
-        setLoading(false);
-      });
-    } catch (error) {
-      setLoading(true);
-      console.log(error);
-    }
+    fetchProducts(10, skip).then((response) => {
+      setProducts(response.data.products);
+      setProductCount(response.data.total);
+      setLoading(false);
+    });
   }, [skip]);
 
   const handlePageChange = (

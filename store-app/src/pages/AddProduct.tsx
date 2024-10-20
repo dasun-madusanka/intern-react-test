@@ -9,9 +9,14 @@ import {
   TextField,
   Grid,
   StepContent,
+  Divider,
 } from "@mui/material";
+import PublishIcon from "@mui/icons-material/Publish";
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { Product } from "../types/Product";
 import ImageUpload from "../components/ImageUpload";
+import InformationModal from "../components/InformationModal";
 import { addProduct, fetchProducts } from "../APIs";
 
 const steps = [
@@ -25,6 +30,10 @@ const steps = [
 
 const AddProduct: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalStatus, setModalStatus] = useState("");
+  const [modalIcon, setModalIcon] = useState(<ThumbUpIcon />);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [productCount, setProductCount] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
@@ -71,14 +80,12 @@ const AddProduct: React.FC = () => {
   });
 
   React.useEffect(() => {
-    try {
-      fetchProducts(1, productCount - 1).then((response) => {
-        setProducts(response.data.products);
-        setProductCount(response.data.total);
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    fetchProducts(1, productCount - 1).then((response) => {
+      setProducts(response.data.products);
+      setProductCount(response.data.total);
+    }).catch((error) => {
+      console.error("Error Message: "+ error);
+    });
   }, [product, productCount]);
 
   const generateId = (): number => {
@@ -160,17 +167,46 @@ const AddProduct: React.FC = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
   const handleSubmit = () => {
-    try {
-      addProduct(product);
-    } catch (error) {
-      console.error(error);
+    addProduct(product).then(() => {
+      setModalIcon(<ThumbUpIcon />);
+      setModalStatus("success");
+      setModalTitle("Product Added Successfully");
+      setOpenModal(true);
+    }).catch((error) => {
+      console.error("Error Message: "+ error);
+      setModalIcon(<ThumbDownIcon />);
+      setModalStatus("error");
+      setModalTitle("Error in Adding Product");
+      setOpenModal(true);
     }
+    );
+  };
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    window.location.reload();
   };
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Stepper activeStep={activeStep} orientation="vertical">
+      <Typography
+        color="secondary"
+        variant="h5"
+        sx={{ textAlign: "left ", mt: 2, mb: 2, fontWeight: 700 }}
+      >
+        Add New Product
+      </Typography>
+      <Divider />
+      <Stepper sx={{mt: 2}} activeStep={activeStep} orientation="vertical">
         {steps.map((label, index) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
@@ -529,7 +565,7 @@ const AddProduct: React.FC = () => {
                 >
                   <Box>
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       onClick={handleNext}
                       sx={{ mt: 1, mr: 1 }}
                     >
@@ -538,7 +574,7 @@ const AddProduct: React.FC = () => {
                     <Button
                       disabled={index === 0}
                       onClick={handleBack}
-                      sx={{ mt: 1, mr: 1 }}
+                      sx={{ mt: 1, mr: 1, color: "text.secondary" }}
                     >
                       Back
                     </Button>
@@ -550,13 +586,34 @@ const AddProduct: React.FC = () => {
         ))}
       </Stepper>
       {activeStep === steps.length && (
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h5">Product Added Successfully!</Typography>
-          <Button onClick={handleSubmit} variant="contained">
+        <Box
+          sx={{
+            p: 3,
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h5">Form Filled Successfully!</Typography>
+          <Button onClick={handleReset}>Edit Again</Button>
+          <Button
+            startIcon={<PublishIcon />}
+            onClick={handleSubmit}
+            variant="contained"
+          >
             Submit
           </Button>
         </Box>
       )}
+      <InformationModal
+        open={openModal}
+        handleOpen={handleOpenModal}
+        handleClose={handleCloseModal}
+        title={modalTitle}
+        status={modalStatus}
+        icon={modalIcon}
+      />
     </Box>
   );
 };
