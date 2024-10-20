@@ -12,8 +12,8 @@ import {
   Divider,
 } from "@mui/material";
 import PublishIcon from "@mui/icons-material/Publish";
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import { Product } from "../types/Product";
 import ImageUpload from "../components/ImageUpload";
 import InformationModal from "../components/InformationModal";
@@ -80,12 +80,14 @@ const AddProduct: React.FC = () => {
   });
 
   React.useEffect(() => {
-    fetchProducts(1, productCount - 1).then((response) => {
-      setProducts(response.data.products);
-      setProductCount(response.data.total);
-    }).catch((error) => {
-      console.error("Error Message: "+ error);
-    });
+    fetchProducts(1, productCount - 1)
+      .then((response) => {
+        setProducts(response.data.products);
+        setProductCount(response.data.total);
+      })
+      .catch((error) => {
+        console.error("Error Message: " + error);
+      });
   }, [product, productCount]);
 
   const generateId = (): number => {
@@ -172,19 +174,20 @@ const AddProduct: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    addProduct(product).then(() => {
-      setModalIcon(<ThumbUpIcon />);
-      setModalStatus("success");
-      setModalTitle("Product Added Successfully");
-      setOpenModal(true);
-    }).catch((error) => {
-      console.error("Error Message: "+ error);
-      setModalIcon(<ThumbDownIcon />);
-      setModalStatus("error");
-      setModalTitle("Error in Adding Product");
-      setOpenModal(true);
-    }
-    );
+    addProduct(product)
+      .then(() => {
+        setModalIcon(<ThumbUpIcon />);
+        setModalStatus("success");
+        setModalTitle("Product Added Successfully");
+        setOpenModal(true);
+      })
+      .catch((error) => {
+        console.error("Error Message: " + error);
+        setModalIcon(<ThumbDownIcon />);
+        setModalStatus("error");
+        setModalTitle("Error in Adding Product");
+        setOpenModal(true);
+      });
   };
 
   const handleOpenModal = () => {
@@ -206,7 +209,7 @@ const AddProduct: React.FC = () => {
         Add New Product
       </Typography>
       <Divider />
-      <Stepper sx={{mt: 2}} activeStep={activeStep} orientation="vertical">
+      <Stepper sx={{ mt: 2 }} activeStep={activeStep} orientation="vertical">
         {steps.map((label, index) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
@@ -523,36 +526,41 @@ const AddProduct: React.FC = () => {
                 )}
 
                 {index === 4 && (
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                      <ImageUpload
-                        multiple={false}
-                        onUploadComplete={handleThumbnail}
-                        title="Select Thumbnail"
-                        isError={!!errors.thumbnail}
-                        errorTitle={errors.thumbnail}
-                        defaultImages={[product.thumbnail]}
-                      />
+                  <>
+                    <Typography textAlign={"left"} variant="body2" sx={{mb: 2}}>
+                      After Selecting Images, Hit "Upload".
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <ImageUpload
+                          multiple={false}
+                          onUploadComplete={handleThumbnail}
+                          title="Select Thumbnail"
+                          isError={!!errors.thumbnail}
+                          errorTitle={errors.thumbnail}
+                          defaultImages={[product.thumbnail]}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <ImageUpload
+                          multiple={false}
+                          onUploadComplete={handleQrCode}
+                          title="Select QR Code"
+                          isError={!!errors.qrCode}
+                          errorTitle={errors.qrCode}
+                          defaultImages={[product.meta.qrCode]}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <ImageUpload
+                          multiple={true}
+                          onUploadComplete={handleProductImages}
+                          title="Select Images"
+                          defaultImages={product.images}
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <ImageUpload
-                        multiple={false}
-                        onUploadComplete={handleQrCode}
-                        title="Select QR Code"
-                        isError={!!errors.qrCode}
-                        errorTitle={errors.qrCode}
-                        defaultImages={[product.meta.qrCode]}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <ImageUpload
-                        multiple={true}
-                        onUploadComplete={handleProductImages}
-                        title="Select Images"
-                        defaultImages={product.images}
-                      />
-                    </Grid>
-                  </Grid>
+                  </>
                 )}
 
                 <Box

@@ -9,7 +9,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Ratings from "./Ratings";
 import { fetchProductById } from "../APIs";
 import { Product } from "../types/Product";
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import InformationModal from "./InformationModal";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import { deleteProduct } from "../APIs";
 
 type ProductCardProps = {
   pid: number;
@@ -19,10 +24,11 @@ export default function ProductCard({ pid }: ProductCardProps) {
   const navigate = useNavigate();
   const [product, setProduct] = React.useState({} as Product);
   const [loading, setLoading] = React.useState(true);
-
-  // React.useEffect(() => {
-  //   fetchProductById(pid).then((response) => setProduct(response.data));
-  // }, [pid]);
+  const [hover, setHover] = React.useState(false);
+  const [openModal, setOpenModal] = React.useState(false);
+  const [modalTitle, setModalTitle] = React.useState("");
+  const [modalStatus, setModalStatus] = React.useState("");
+  const [modalIcon, setModalIcon] = React.useState(<ThumbUpIcon />);
 
   React.useEffect(() => {
     fetchProductById(pid).then((response) => {
@@ -35,8 +41,40 @@ export default function ProductCard({ pid }: ProductCardProps) {
     navigate(`/products/${pid}`);
   };
 
+  const handleDelete = () => {
+    console.log("Delete product with ID:", pid);
+    deleteProduct(pid)
+      .then(() => {
+        console.log("Product deleted successfully.");
+        setOpenModal(true);
+        setModalTitle("Product Deleted Successfully");
+        setModalIcon(<ThumbUpIcon />);
+        setModalStatus("success");
+      })
+      .catch((error) => {
+        setOpenModal(true);
+        setModalTitle("Can't Delete Product");
+        setModalIcon(<ThumbDownIcon />);
+        setModalStatus("error");
+        console.error("Error deleting product:", error);
+      });
+  };
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    window.location.reload();
+  };
+
   return (
-    <Card sx={{ width: 250, height: 300 }}>
+    <Card
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      sx={{ width: 250, height: 300, position: "relative" }}
+    >
       {loading ? (
         <Box
           sx={{
@@ -119,6 +157,27 @@ export default function ProductCard({ pid }: ProductCardProps) {
           </CardContent>
         </CardActionArea>
       )}
+      {hover && (
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+          }}
+          onClick={handleDelete}
+        >
+          <DeleteIcon color="error" />
+        </IconButton>
+      )}
+      <InformationModal
+        open={openModal}
+        handleOpen={handleOpenModal}
+        handleClose={handleCloseModal}
+        title={modalTitle}
+        status={modalStatus}
+        icon={modalIcon}
+      />
     </Card>
   );
 }
