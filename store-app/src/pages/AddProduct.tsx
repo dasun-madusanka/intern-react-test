@@ -99,6 +99,17 @@ const AddProduct: React.FC = () => {
     setProduct({ ...product, id: generateId() });
   }, [products]);
 
+  React.useEffect(() => {
+    let productAvailability: string = "In Stock";
+    if (product.stock <= 5 && product.stock > 0 )
+      productAvailability = "Low Stock"
+    else if (product.stock == 0)
+      productAvailability = "Out of Stock";
+
+    setProduct({ ...product, availabilityStatus: productAvailability});
+  }, [product.stock]);
+
+
   const validateStep = (step: number) => {
     const newErrors: { [key: string]: string } = {};
 
@@ -309,7 +320,6 @@ const AddProduct: React.FC = () => {
                         name="description"
                         multiline
                         rows={4}
-                        required
                         value={product.description}
                         onChange={(e) =>
                           setProduct({
@@ -511,6 +521,7 @@ const AddProduct: React.FC = () => {
                         label="Minimum Order Quantity"
                         name="minimumOrderQuantity"
                         type="number"
+                        required
                         error={!!errors.minimumOrderQuantity}
                         helperText={errors.minimumOrderQuantity}
                         value={product.minimumOrderQuantity}

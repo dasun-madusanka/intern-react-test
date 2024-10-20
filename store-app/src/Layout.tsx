@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Fab
           sx={{ position: "fixed", bottom: 16, right: 16 }}
           aria-label="add-product"
-          color="secondary"
+          color="primary"
           onClick={() => navigate("/products/add")}
         >
           <AddIcon />

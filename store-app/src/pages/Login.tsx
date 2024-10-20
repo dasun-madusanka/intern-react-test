@@ -7,6 +7,7 @@ import {
   Box,
   CssBaseline,
   Grid,
+  Alert
 } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +31,16 @@ const Login: React.FC = () => {
     if (!email) newErrors["email"] = "Email is required";
     else if (!validateEmail(email)) newErrors["email"] = "Email is invalid";
     if (!password) newErrors["password"] = "Password is required";
+    else if (password.length < 8)
+      newErrors["password"] = "Password is too short";
+    else if (!/[A-Z]/.test(password))
+      newErrors["password"] =
+        "Password must contain at least one uppercase letter";
+    else if (!/[a-z]/.test(password))
+      newErrors["password"] =
+        "Password must contain at least one lowercase letter";
+    else if (!/[0-9]/.test(password))
+      newErrors["password"] = "Password must contain at least one number";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -103,6 +114,7 @@ const Login: React.FC = () => {
           >
             Login
           </Button>
+          <Alert severity="info" sx={{mb: 2}}>Use any email and password</Alert>
           <Grid container>
             <Grid item>
               <Typography variant="body2">

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Divider, Paper, Typography } from "@mui/material";
+import { Alert, Box, Divider, Paper, Typography } from "@mui/material";
 import Ratings from "./Ratings";
 import StockChip from "./StockChip";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
@@ -33,16 +33,18 @@ type SingleProductBasicProps = {
   tags: string[];
   price: number;
   qrCode: string;
+  barcode: string;
   stock: number;
   shippingInformation: string;
   warrantyInformation: string;
   returnPolicy: string;
   discountPercentage: number;
   availabilityStatus: string;
+  minimumOrderQuantity: number;
 };
 
 export default function SingleProductBasic({
-  thumbnail,
+  thumbnail: initialThumbnail,
   images,
   title,
   rating,
@@ -51,13 +53,16 @@ export default function SingleProductBasic({
   tags,
   price,
   qrCode,
+  barcode,
   stock,
   shippingInformation,
   warrantyInformation,
   returnPolicy,
   discountPercentage,
   availabilityStatus,
+  minimumOrderQuantity
 }: SingleProductBasicProps) {
+  const [thumbnail, setThumbnail] = React.useState(initialThumbnail);
   const getPreviousPrice = (
     currentPrice: number,
     discountPercentage: number
@@ -112,6 +117,7 @@ export default function SingleProductBasic({
                   src={image}
                   alt={title}
                   style={{ width: 70, height: 70 }}
+                  onClick={() => setThumbnail(image)}
                 />
               ))}
           </Box>
@@ -128,7 +134,12 @@ export default function SingleProductBasic({
             alignItems: "center",
           }}
         >
-          <Typography variant="h5" textAlign={"left"} fontWeight={500}>
+          <Typography
+            variant="h5"
+            color="secondary"
+            textAlign={"left"}
+            fontWeight={500}
+          >
             {title}
           </Typography>
           <StockChip inStock={availabilityStatus} />
@@ -136,7 +147,7 @@ export default function SingleProductBasic({
         <Box sx={ListItemStyles}>
           <Ratings rating={rating} />
           <Typography variant="body2" color="text.secondary">
-            {/* ({product.reviews.length} reviews) */}
+            ({reviews.length} reviews)
           </Typography>
         </Box>
         <Box sx={ListItemStyles}>
@@ -152,7 +163,7 @@ export default function SingleProductBasic({
             Tags :
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {/* {product.tags.join(", ")} */}
+            {tags.join(", ")}
           </Typography>
         </Box>
 
@@ -183,7 +194,11 @@ export default function SingleProductBasic({
         </Box>
         <Box sx={ListItemStyles}>
           <img src={qrCode} alt={title} style={{ height: 70 }} />
+          <Typography variant="body2" color="text.secondary">
+            {barcode}
+          </Typography>
         </Box>
+        <Alert severity="info">{"Minimum Order Quantity is "+ minimumOrderQuantity}</Alert>
       </Box>
 
       <Box
@@ -197,22 +212,22 @@ export default function SingleProductBasic({
         <ProductInfo
           title="Stock Information"
           icon={<Inventory2Icon />}
-          value={stock + "Available"}
+          value={stock + " Available"}
         />
         <ProductInfo
           title="Shipping Information"
           icon={<LocalShippingIcon />}
-          value={shippingInformation}
+          value={(shippingInformation) ? shippingInformation : "No Shipping Information"}
         />
         <ProductInfo
           title="Warranty Information"
           icon={<VerifiedUserIcon />}
-          value={warrantyInformation}
+          value={(warrantyInformation) ? warrantyInformation : "No Warranty Information"}
         />
         <ProductInfo
           title="Return Policy"
           icon={<AutorenewIcon />}
-          value={returnPolicy}
+          value={(returnPolicy) ? returnPolicy : "No Return Policy"}
         />
       </Box>
     </Paper>

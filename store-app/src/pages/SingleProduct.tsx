@@ -84,12 +84,14 @@ export default function SingleProduct() {
             tags={product.tags}
             price={product.price}
             qrCode={product.meta?.qrCode}
+            barcode={product.meta?.barcode}
             stock={product.stock}
             shippingInformation={product.shippingInformation}
             warrantyInformation={product.warrantyInformation}
             returnPolicy={product.returnPolicy}
             discountPercentage={product.discountPercentage}
             availabilityStatus={product.availabilityStatus}
+            minimumOrderQuantity={product.minimumOrderQuantity}
           />
 
           <SingleProductDescription
