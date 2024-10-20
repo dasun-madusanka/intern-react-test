@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Divider, Paper, Typography } from "@mui/material";
+import formatTimestamp from "../functions/FormatDateTime";
 
 type SingleProductDescriptionProps = {
   description: string;
@@ -65,8 +66,8 @@ export default function SingleProductDescription({
           title="Dimension"
           value={`${height} x ${width} x ${depth}`}
         />
-        <SingleSpec title="Created At" value={createdAt} />
-        <SingleSpec title="Updated At" value={updatedAt} />
+        <SingleSpec title="Created At" value={formatTimestamp(createdAt)} />
+        <SingleSpec title="Updated At" value={formatTimestamp(updatedAt)} />
       </Box>
     </Paper>
   );

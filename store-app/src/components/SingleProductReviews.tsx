@@ -1,5 +1,6 @@
 import { Box, Divider, Paper, Typography } from "@mui/material";
 import Ratings from "./Ratings";
+import formatTimestamp from "../functions/FormatDateTime";
 import React from "react";
 
 type SingleReview = {
@@ -59,7 +60,7 @@ function SingleReviewCard({
         </Box>
         <Box>
           <Typography variant="body2" gutterBottom>
-            {date}
+            {formatTimestamp(date)}
           </Typography>
         </Box>
       </Box>

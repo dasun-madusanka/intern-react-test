@@ -5,12 +5,14 @@ import { CircularProgress, Divider, Typography } from "@mui/material";
 import { Product } from "../types/Product";
 import { fetchProducts } from "../APIs";
 import ProductCard from "../components/ProductCard";
+import { usePagination } from "../context/PaginationContext";
 
 export default function Products() {
   const [products, setProducts] = React.useState([{}] as Product[]);
   const [loading, setLoading] = React.useState(true);
-  const [skip, setSkip] = React.useState(0);
   const [productCount, setProductCount] = React.useState(0);
+
+  const { skip, setSkip } = usePagination();
 
   React.useEffect(() => {
     fetchProducts(10, skip).then((response) => {
@@ -76,6 +78,7 @@ export default function Products() {
           count={Math.ceil(productCount / 10)}
           onChange={handlePageChange}
           color="primary"
+          page={Math.floor(skip / 10) + 1}
         />
       </Box>
     </Box>
