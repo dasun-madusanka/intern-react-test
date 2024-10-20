@@ -5,8 +5,10 @@ type StockChipProps = {
     inStock: string;
 };
 
-export default function StockChip({ inStock }: StockChipProps) {
+const StockChip: React.FC<StockChipProps> = ({ inStock }) => {
   return (
     <Chip label={inStock} color={(inStock == "In Stock")? "success" : "error"} />
   )
 }
+
+export default StockChip;

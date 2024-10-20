@@ -32,7 +32,7 @@ function SingleSpec({ title, value }: SingleSpecProps) {
   );
 }
 
-export default function SingleProductDescription({
+const SingleProductDescription: React.FC<SingleProductDescriptionProps> = ({
   description,
   brand,
   sku,
@@ -42,10 +42,10 @@ export default function SingleProductDescription({
   depth,
   createdAt,
   updatedAt,
-}: SingleProductDescriptionProps) {
+}) => {
   return (
     <Paper sx={{ width: "100%", p: 2, mb: 2, textAlign: "left" }}>
-      <Typography variant="h5" fontWeight={600} gutterBottom sx={{mb: 2}}>
+      <Typography variant="h5" fontWeight={600} gutterBottom sx={{ mb: 2 }}>
         Description
       </Typography>
       <Typography variant="body2" gutterBottom>
@@ -54,12 +54,12 @@ export default function SingleProductDescription({
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h5" fontWeight={600} gutterBottom sx={{mb: 2}}>
+      <Typography variant="h5" fontWeight={600} gutterBottom sx={{ mb: 2 }}>
         Specifications
       </Typography>
 
       <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-        <SingleSpec title="Brand" value={(brand)?"brand": "No Brand"} />
+        <SingleSpec title="Brand" value={brand ? "brand" : "No Brand"} />
         <SingleSpec title="SKU" value={sku} />
         <SingleSpec title="Weight" value={weight} />
         <SingleSpec
@@ -71,4 +71,6 @@ export default function SingleProductDescription({
       </Box>
     </Paper>
   );
-}
+};
+
+export default SingleProductDescription;

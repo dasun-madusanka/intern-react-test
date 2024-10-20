@@ -1,26 +1,28 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import CardActionArea from "@mui/material/CardActionArea";
-import CircularProgress from "@mui/material/CircularProgress";
-import Ratings from "./Ratings";
-import { fetchProductById } from "../APIs";
-import { Product } from "../types/Product";
-import { Box, IconButton } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import InformationModal from "./InformationModal";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  CardActionArea,
+  Typography,
+  CircularProgress,
+  Box,
+  IconButton,
+} from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import { deleteProduct } from "../APIs";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Ratings from "./Ratings";
+import { fetchProductById, deleteProduct } from "../APIs";
+import { Product } from "../types/Product";
+import InformationModal from "./InformationModal";
 
 type ProductCardProps = {
   pid: number;
 };
 
-export default function ProductCard({ pid }: ProductCardProps) {
+const ProductCard: React.FC<ProductCardProps> = ({ pid }) => {
   const navigate = useNavigate();
   const [product, setProduct] = React.useState({} as Product);
   const [loading, setLoading] = React.useState(true);
@@ -180,4 +182,6 @@ export default function ProductCard({ pid }: ProductCardProps) {
       />
     </Card>
   );
-}
+};
+
+export default ProductCard;

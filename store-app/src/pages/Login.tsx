@@ -62,7 +62,7 @@ const Login: React.FC = () => {
     <Container
       component="main"
       maxWidth="xs"
-      sx={{ display: "flex", alignItems: "center", height: "100vh" }}
+      sx={{ display: "flex", alignItems: "center", height: "100%" }}
     >
       <CssBaseline />
       <Box

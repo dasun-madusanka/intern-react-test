@@ -7,7 +7,7 @@ import { fetchProducts } from "../APIs";
 import ProductCard from "../components/ProductCard";
 import { usePagination } from "../context/PaginationContext";
 
-export default function Products() {
+const Products: React.FC = () => {
   const [products, setProducts] = React.useState([{}] as Product[]);
   const [loading, setLoading] = React.useState(true);
   const [productCount, setProductCount] = React.useState(0);
@@ -84,3 +84,5 @@ export default function Products() {
     </Box>
   );
 }
+
+export default Products;

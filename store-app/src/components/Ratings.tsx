@@ -5,7 +5,7 @@ type RatingProps = {
     rating: number;
 };
 
-export default function Ratings({ rating }: RatingProps) {
+const Ratings: React.FC<RatingProps> = ({ rating }) => {
   const [value, setValue] = React.useState<number | null>(2);
 
   React.useEffect(() => {
@@ -16,3 +16,5 @@ export default function Ratings({ rating }: RatingProps) {
     <Rating value={value} readOnly />
   )
 }
+
+export default Ratings;

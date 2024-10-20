@@ -1,13 +1,12 @@
 import React from "react";
+import { Box, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
-import SingleProductDescription from "../components/SingleProductDescription";
-import CircularProgress from "@mui/material/CircularProgress";
 import { Product } from "../types/Product";
 import { fetchProductById } from "../APIs";
-import { Box } from "@mui/material";
 import SingleProductRatings from "../components/SingleProductRatings";
 import SingleProductBasic from "../components/SingleProductBasic";
 import SingleProductReviews from "../components/SingleProductReviews";
+import SingleProductDescription from "../components/SingleProductDescription";
 
 type Review = {
   rating: number;
@@ -40,7 +39,7 @@ function countRatings(reviews: Review[] = []) {
   return ratingCounts;
 }
 
-export default function SingleProduct() {
+const SingleProduct: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = React.useState({} as Product);
   const [loading, setLoading] = React.useState(true);
@@ -122,3 +121,5 @@ export default function SingleProduct() {
     </Box>
   );
 }
+
+export default SingleProduct;

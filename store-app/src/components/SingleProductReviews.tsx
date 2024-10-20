@@ -1,7 +1,7 @@
+import React from "react";
 import { Box, Divider, Paper, Typography } from "@mui/material";
 import Ratings from "./Ratings";
 import formatTimestamp from "../functions/FormatDateTime";
-import React from "react";
 
 type SingleReview = {
   rating: number;
@@ -15,9 +15,9 @@ type SingleProductReviewsProps = {
   reviews: SingleReview[];
 };
 
-export default function SingleProductReviews({
+const SingleProductReviews: React.FC<SingleProductReviewsProps> = ({
   reviews,
-}: SingleProductReviewsProps) {
+}) => {
   return (
     <Paper sx={{ width: "100%", p: 2, mb: 2, textAlign: "left" }}>
       <Typography variant="h5" fontWeight={600} gutterBottom sx={{ mb: 2 }}>
@@ -30,7 +30,7 @@ export default function SingleProductReviews({
       ))}
     </Paper>
   );
-}
+};
 
 function SingleReviewCard({
   rating,
@@ -73,3 +73,5 @@ function SingleReviewCard({
     </Paper>
   );
 }
+
+export default SingleProductReviews;

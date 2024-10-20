@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./Layout";
 import Products from "./pages/Products";
@@ -8,7 +8,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Login from "./pages/Login";
 import "./App.css";
 
-function App() {
+const App: React.FC = () => {
   return (
     <Router>
       <Layout>

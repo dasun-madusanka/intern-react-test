@@ -1,7 +1,6 @@
 import React from "react";
 import Ratings from "./Ratings";
-import { Box, Paper, Stack, Typography } from "@mui/material";
-import Slider from "@mui/material/Slider";
+import { Box, Paper, Stack, Typography, Slider } from "@mui/material";
 
 type SingleProductRatingsProps = {
   rating: number;
@@ -13,19 +12,25 @@ type SingleProductRatingsProps = {
   total: number;
 };
 
-export default function SingleProductRatings({
+const SingleProductRatings: React.FC<SingleProductRatingsProps> = ({
   rating,
   fiveStar,
   fourStar,
   threeStar,
   twoStar,
   oneStar,
-  total
-}: SingleProductRatingsProps) {
+  total,
+}) => {
   return (
     <Paper sx={{ width: "100%", p: 2, mb: 2, display: "flex" }}>
       <Box
-        sx={{ display: "flex", width: "30%", flexDirection: "column", gap: 2, justifyContent:"center" }}
+        sx={{
+          display: "flex",
+          width: "30%",
+          flexDirection: "column",
+          gap: 2,
+          justifyContent: "center",
+        }}
       >
         <Stack
           direction="row"
@@ -49,7 +54,7 @@ export default function SingleProductRatings({
       </Box>
     </Paper>
   );
-}
+};
 
 type RatingCountProps = {
   rating: number;
@@ -62,9 +67,9 @@ function SingleRatingCount({ rating, count, total }: RatingCountProps) {
     <Box sx={{ display: "flex", gap: 3 }}>
       <Ratings rating={rating} />
       <RatingLevel count={count} total={total} />
-        <Typography variant="body2" color="text.secondary">
-            {count}
-        </Typography>
+      <Typography variant="body2" color="text.secondary">
+        {count}
+      </Typography>
     </Box>
   );
 }
@@ -75,5 +80,7 @@ type RatingLevelProps = {
 };
 
 function RatingLevel({ count, total }: RatingLevelProps) {
-  return <Slider sx={{width: 250}} value={count} max={total} size="small" />;
+  return <Slider sx={{ width: 250 }} value={count} max={total} size="small" />;
 }
+
+export default SingleProductRatings;

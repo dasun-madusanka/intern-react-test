@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 interface PaginationContextType {
   skip: number;
   setSkip: (value: number) => void;
+  removeSkip: () => void;
 }
 
 const PaginationContext = createContext<PaginationContextType | undefined>(
@@ -25,8 +26,13 @@ export const PaginationProvider: React.FC<{ children: React.ReactNode }> = ({
     setSkipState(value);
   };
 
+  const removeSkip = () => {
+    setSkipState(0);
+    localStorage.removeItem("skip");
+  };
+
   return (
-    <PaginationContext.Provider value={{ skip, setSkip }}>
+    <PaginationContext.Provider value={{ skip, setSkip, removeSkip }}>
       {children}
     </PaginationContext.Provider>
   );

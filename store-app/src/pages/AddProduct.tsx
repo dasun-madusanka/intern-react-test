@@ -185,6 +185,7 @@ const AddProduct: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    console.log("Product Submitted", product);
     addProduct(product)
       .then(() => {
         setModalIcon(<ThumbUpIcon />);

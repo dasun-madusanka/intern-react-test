@@ -1,11 +1,11 @@
 import React from "react";
 import { Alert, Box, Divider, Paper, Typography } from "@mui/material";
-import Ratings from "./Ratings";
-import StockChip from "./StockChip";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
+import Ratings from "./Ratings";
+import StockChip from "./StockChip";
 
 const ListItemStyles = {
   width: "100%",
@@ -43,7 +43,7 @@ type SingleProductBasicProps = {
   minimumOrderQuantity: number;
 };
 
-export default function SingleProductBasic({
+const SingleProductBasic: React.FC<SingleProductBasicProps> = ({
   thumbnail: initialThumbnail,
   images,
   title,
@@ -60,8 +60,8 @@ export default function SingleProductBasic({
   returnPolicy,
   discountPercentage,
   availabilityStatus,
-  minimumOrderQuantity
-}: SingleProductBasicProps) {
+  minimumOrderQuantity,
+}) => {
   const [thumbnail, setThumbnail] = React.useState(initialThumbnail);
   const getPreviousPrice = (
     currentPrice: number,
@@ -198,7 +198,9 @@ export default function SingleProductBasic({
             {barcode}
           </Typography>
         </Box>
-        <Alert severity="info">{"Minimum Order Quantity is "+ minimumOrderQuantity}</Alert>
+        <Alert severity="info">
+          {"Minimum Order Quantity is " + minimumOrderQuantity}
+        </Alert>
       </Box>
 
       <Box
@@ -217,22 +219,30 @@ export default function SingleProductBasic({
         <ProductInfo
           title="Shipping Information"
           icon={<LocalShippingIcon />}
-          value={(shippingInformation) ? shippingInformation : "No Shipping Information"}
+          value={
+            shippingInformation
+              ? shippingInformation
+              : "No Shipping Information"
+          }
         />
         <ProductInfo
           title="Warranty Information"
           icon={<VerifiedUserIcon />}
-          value={(warrantyInformation) ? warrantyInformation : "No Warranty Information"}
+          value={
+            warrantyInformation
+              ? warrantyInformation
+              : "No Warranty Information"
+          }
         />
         <ProductInfo
           title="Return Policy"
           icon={<AutorenewIcon />}
-          value={(returnPolicy) ? returnPolicy : "No Return Policy"}
+          value={returnPolicy ? returnPolicy : "No Return Policy"}
         />
       </Box>
     </Paper>
   );
-}
+};
 
 type ProductInfoProps = {
   title: string;
@@ -263,3 +273,5 @@ function ProductInfo({ title, icon, value }: ProductInfoProps) {
     </Paper>
   );
 }
+
+export default SingleProductBasic;
