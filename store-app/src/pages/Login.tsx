@@ -1,5 +1,4 @@
-// src/components/Login.tsx
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Button,
   TextField,
@@ -8,64 +7,66 @@ import {
   Box,
   CssBaseline,
   Grid,
-  Paper
-} from '@mui/material';
+} from "@mui/material";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
-  
 
-  const validateFields = ()=>{
+  const validateFields = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!email) newErrors ['email'] = 'Email is required';
-    else if (!validateEmail(email)) newErrors ['email'] = 'Email is invalid';
-    if (!password) newErrors ['password'] = 'Password is required';
+    if (!email) newErrors["email"] = "Email is required";
+    else if (!validateEmail(email)) newErrors["email"] = "Email is invalid";
+    if (!password) newErrors["password"] = "Password is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (validateFields()){
-        console.log('Login submitted:', { email, password });
+    if (validateFields()) {
+      login(email);
+      navigate("/");
+      console.log("Login submitted:", { email, password });
     }
 
-    // Perform login logic here, e.g., send a request to your API
-
-    console.log('Login submitted:', { email, password });
+    console.log("Error In Login");
   };
 
   return (
-    <Container component="main" maxWidth="xs" sx={{display: "flex", alignItems: "center", height: "100vh"}}>
+    <Container
+      component="main"
+      maxWidth="xs"
+      sx={{ display: "flex", alignItems: "center", height: "100vh" }}
+    >
       <CssBaseline />
       <Box
         sx={{
-        maxHeight: "100%",
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          jc: 'center',
+          maxHeight: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          jc: "center",
         }}
       >
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          noValidate
-          sx={{ mt: 1 }}
-        >
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
             required

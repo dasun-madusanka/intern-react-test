@@ -26,7 +26,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       }}
     >
       {!isLoginPage && <Header />}
-      <Container sx={{ width: "100%", p: 2 }}>{children}</Container>
+      <Container sx={{ width: "100%", p: 2, mt: 10 }}>{children}</Container>
       {!isLoginPage && (
         <Fab
           sx={{ position: "fixed", bottom: 16, right: 16 }}

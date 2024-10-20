@@ -3,14 +3,17 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { CustomThemeProvider } from "./context/ThemeContext.tsx";
 import { PaginationProvider } from "./context/PaginationContext.tsx";
+import { AuthProvider } from "./context/AuthContext.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <CustomThemeProvider>
-      <PaginationProvider>
-        <App />
-      </PaginationProvider>
-    </CustomThemeProvider>
+    <AuthProvider>
+      <CustomThemeProvider>
+        <PaginationProvider>
+          <App />
+        </PaginationProvider>
+      </CustomThemeProvider>
+    </AuthProvider>
   </StrictMode>
 );
